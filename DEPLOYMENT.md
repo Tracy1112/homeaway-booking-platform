@@ -7,6 +7,7 @@ Vercel is created by the Next.js team and provides the best Next.js deployment e
 ### Steps
 
 1. **Prepare Code Repository**
+
    ```bash
    git init
    git add .
@@ -16,12 +17,14 @@ Vercel is created by the Next.js team and provides the best Next.js deployment e
    ```
 
 2. **Import Project to Vercel**
+
    - Visit [vercel.com](https://vercel.com)
    - Click "New Project"
    - Import your GitHub repository
 
 3. **Configure Environment Variables**
    Add all environment variables in Vercel project settings:
+
    - `DATABASE_URL`
    - `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY`
    - `CLERK_SECRET_KEY`
@@ -33,6 +36,7 @@ Vercel is created by the Next.js team and provides the best Next.js deployment e
 
 4. **Configure Build Command**
    Vercel automatically detects Next.js projects, but ensure the build command is:
+
    ```json
    "build": "npx prisma generate && next build"
    ```
@@ -54,6 +58,7 @@ Vercel is created by the Next.js team and provides the best Next.js deployment e
 #### Run Database Migrations
 
 After deployment, you need to run in production:
+
 ```bash
 npx prisma db push
 ```
@@ -124,6 +129,7 @@ CMD ["node", "server.js"]
 ```
 
 Add to `next.config.mjs`:
+
 ```javascript
 output: 'standalone',
 ```
@@ -133,9 +139,11 @@ output: 'standalone',
 ## Environment Variable Management
 
 ### Development Environment
+
 Use `.env.local` file (already added to `.gitignore`)
 
 ### Production Environment
+
 - Vercel: Project Settings → Environment Variables
 - Other platforms: Respective environment variable configuration interface
 
@@ -199,16 +207,19 @@ npx @sentry/wizard@latest -i nextjs
 ### Common Issues
 
 1. **Build Failures**
+
    - Check if environment variables are complete
    - Check if Prisma generation succeeded
    - Review build logs
 
 2. **Database Connection Failures**
+
    - Check if `DATABASE_URL` is correct
    - Check MongoDB Atlas IP whitelist
    - Check network connection
 
 3. **Authentication Issues**
+
    - Check if Clerk keys are correct
    - Check Clerk callback URL configuration
 
