@@ -667,11 +667,9 @@ This project serves as a portfolio piece showcasing:
 
 ## 🌐 Live Demo
 
-<!-- If you have a deployed version, add the link here -->
+🔗 **Live Demo**: [https://homeaway-booking-platform.vercel.app](https://homeaway-booking-platform.vercel.app)
 
-🔗 **Live Demo**: [Deploy on Vercel/Netlify and add link here]
-
-> 💡 **Note**: This is a portfolio project. For a live demonstration, please contact me directly.
+> 💡 **Note**: This is a portfolio project demonstrating full-stack development capabilities. The demo is deployed on Vercel's free tier.
 
 ---
 
