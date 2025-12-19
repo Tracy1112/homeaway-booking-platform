@@ -11,7 +11,7 @@ const inter = Inter({ subsets: ['latin'] })
 export const metadata: Metadata = {
   title: 'HomeAway - Short-Term Rental Booking Platform',
   description: 'Feel at home, away from home. A modern short-term rental booking platform showcasing full-stack development capabilities.',
-  keywords: ['短租', '预订', 'Next.js', '全栈开发'],
+  keywords: ['short-term rental', 'booking', 'Next.js', 'full-stack development', 'property rental', 'Australia'],
 }
 
 export default function RootLayout({
@@ -21,7 +21,7 @@ export default function RootLayout({
 }>) {
   return (
     <ClerkProvider>
-      <html lang="zh-CN" suppressHydrationWarning>
+      <html lang="en" suppressHydrationWarning>
         <body className={inter.className}>
           <ErrorBoundary>
             <Providers>
