@@ -9,7 +9,8 @@
     "lint": "next lint",
     "test": "jest",
     "test:watch": "jest --watch",
-    "test:coverage": "jest --coverage"
+    "test:coverage": "jest --coverage",
+    "keep-alive": "node scripts/keep-alive.js"
   },
   "dependencies": {
     "@clerk/nextjs": "^5.0.1",

@@ -1,0 +1,43 @@
+name: Supabase Keep-Alive
+
+# This workflow runs weekly to keep Supabase project active
+# Free tier projects pause after 7 days of inactivity
+
+on:
+  schedule:
+    # Run every Sunday at 00:00 UTC (adjust timezone as needed)
+    - cron: '0 0 * * 0'
+  workflow_dispatch: # Allow manual trigger
+
+jobs:
+  keep-alive:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run keep-alive script
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
+        run: npm run keep-alive
+
+      - name: Report result
+        if: always()
+        run: |
+          if [ ${{ job.status }} == 'success' ]; then
+            echo "✅ Keep-alive completed successfully"
+          else
+            echo "❌ Keep-alive failed - check logs above"
+            exit 1
+          fi
+
