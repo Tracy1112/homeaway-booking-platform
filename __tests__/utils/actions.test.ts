@@ -44,6 +44,20 @@ jest.mock('@/utils/db', () => ({
       update: jest.fn(),
       delete: jest.fn(),
     },
+    booking: {
+      findMany: jest.fn(),
+      findFirst: jest.fn(),
+      findUnique: jest.fn(),
+      create: jest.fn(),
+      delete: jest.fn(),
+      deleteMany: jest.fn(),
+    },
+    review: {
+      findMany: jest.fn(),
+      findFirst: jest.fn(),
+      create: jest.fn(),
+      delete: jest.fn(),
+    },
   },
 }));
 
@@ -355,6 +369,181 @@ describe('Property Actions', () => {
       const property = await fetchPropertyDetails('nonexistent');
 
       expect(property).toBeNull();
+    });
+  });
+});
+
+describe('Booking Actions', () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
+  const mockUser = {
+    id: 'user_123',
+    privateMetadata: { hasProfile: true },
+  };
+
+  describe('createBookingAction', () => {
+    it('should create booking successfully', async () => {
+      const { createBookingAction } = require('@/utils/actions');
+      const { redirect } = require('next/navigation');
+      (currentUser as jest.Mock).mockResolvedValue(mockUser);
+      
+      const mockProperty = {
+        id: 'prop_123',
+        price: 100,
+      };
+      
+      const prevState = {
+        propertyId: 'prop_123',
+        checkIn: new Date('2024-01-01'),
+        checkOut: new Date('2024-01-04'),
+      };
+      
+      (db.booking.deleteMany as jest.Mock).mockResolvedValue({ count: 0 });
+      (db.property.findUnique as jest.Mock).mockResolvedValue(mockProperty);
+      (db.booking.findFirst as jest.Mock).mockResolvedValue(null); // No conflict
+      (db.booking.create as jest.Mock).mockResolvedValue({
+        id: 'booking_123',
+        propertyId: 'prop_123',
+        totalNights: 3,
+      });
+
+      await createBookingAction(prevState, new FormData());
+
+      expect(db.property.findUnique).toHaveBeenCalled();
+      expect(db.booking.create).toHaveBeenCalled();
+      expect(redirect).toHaveBeenCalled();
+    });
+
+    it('should handle property not found', async () => {
+      const { createBookingAction } = require('@/utils/actions');
+      (currentUser as jest.Mock).mockResolvedValue(mockUser);
+      
+      const prevState = {
+        propertyId: 'nonexistent',
+        checkIn: new Date('2024-01-01'),
+        checkOut: new Date('2024-01-04'),
+      };
+      
+      (db.booking.deleteMany as jest.Mock).mockResolvedValue({ count: 0 });
+      (db.property.findUnique as jest.Mock).mockResolvedValue(null);
+
+      const result = await createBookingAction(prevState, new FormData());
+
+      expect(result).toHaveProperty('message');
+      expect(db.booking.create).not.toHaveBeenCalled();
+    });
+
+    it('should handle booking conflicts', async () => {
+      const { createBookingAction } = require('@/utils/actions');
+      (currentUser as jest.Mock).mockResolvedValue(mockUser);
+      
+      const mockProperty = {
+        id: 'prop_123',
+        price: 100,
+      };
+      
+      const prevState = {
+        propertyId: 'prop_123',
+        checkIn: new Date('2024-01-01'),
+        checkOut: new Date('2024-01-04'),
+      };
+      
+      (db.booking.deleteMany as jest.Mock).mockResolvedValue({ count: 0 });
+      (db.property.findUnique as jest.Mock).mockResolvedValue(mockProperty);
+      (db.booking.findFirst as jest.Mock).mockResolvedValue({
+        id: 'existing_booking',
+      }); // Conflict exists
+
+      const result = await createBookingAction(prevState, new FormData());
+
+      expect(result).toHaveProperty('message');
+      expect(result.message).toContain('booked');
+      expect(db.booking.create).not.toHaveBeenCalled();
+    });
+
+    it('should validate date range', async () => {
+      const { createBookingAction } = require('@/utils/actions');
+      (currentUser as jest.Mock).mockResolvedValue(mockUser);
+      
+      const prevState = {
+        propertyId: 'prop_123',
+        checkIn: new Date('2024-01-04'),
+        checkOut: new Date('2024-01-01'), // Invalid: checkOut before checkIn
+      };
+      
+      (db.booking.deleteMany as jest.Mock).mockResolvedValue({ count: 0 });
+
+      const result = await createBookingAction(prevState, new FormData());
+
+      expect(result).toHaveProperty('message');
+      expect(result.message).toContain('after');
+      expect(db.booking.create).not.toHaveBeenCalled();
+    });
+  });
+});
+
+describe('Review Actions', () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
+  const mockUser = {
+    id: 'user_123',
+    privateMetadata: { hasProfile: true },
+  };
+
+  describe('createReviewAction', () => {
+    const mockFormData = new FormData();
+    mockFormData.append('propertyId', 'prop_123');
+    mockFormData.append('rating', '5');
+    mockFormData.append('comment', 'Great place!');
+
+    it('should create review successfully', async () => {
+      const { createReviewAction } = require('@/utils/actions');
+      (currentUser as jest.Mock).mockResolvedValue(mockUser);
+      
+      (db.property.findUnique as jest.Mock).mockResolvedValue({ id: 'prop_123' });
+      (db.review.findFirst as jest.Mock).mockResolvedValue(null); // No existing review
+      (db.review.create as jest.Mock).mockResolvedValue({
+        id: 'review_123',
+        rating: 5,
+      });
+
+      const result = await createReviewAction({}, mockFormData);
+
+      expect(db.review.create).toHaveBeenCalled();
+      expect(result).toHaveProperty('message');
+    });
+
+    it('should prevent duplicate reviews', async () => {
+      const { createReviewAction } = require('@/utils/actions');
+      (currentUser as jest.Mock).mockResolvedValue(mockUser);
+      
+      (db.property.findUnique as jest.Mock).mockResolvedValue({ id: 'prop_123' });
+      (db.review.findFirst as jest.Mock).mockResolvedValue({
+        id: 'existing_review',
+      }); // Review already exists
+
+      const result = await createReviewAction({}, mockFormData);
+
+      expect(result).toHaveProperty('message');
+      expect(result.message).toContain('already');
+      expect(db.review.create).not.toHaveBeenCalled();
+    });
+
+    it('should handle property not found', async () => {
+      const { createReviewAction } = require('@/utils/actions');
+      (currentUser as jest.Mock).mockResolvedValue(mockUser);
+      
+      (db.property.findUnique as jest.Mock).mockResolvedValue(null);
+
+      const result = await createReviewAction({}, mockFormData);
+
+      expect(result).toHaveProperty('message');
+      expect(result.message).toContain('not found');
+      expect(db.review.create).not.toHaveBeenCalled();
     });
   });
 });
