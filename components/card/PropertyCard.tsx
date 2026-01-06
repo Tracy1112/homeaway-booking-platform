@@ -1,8 +1,8 @@
-import Image from 'next/image';
 import Link from 'next/link';
 import CountryFlagAndName from './CountryFlagAndName';
 import PropertyRating from './PropertyRating';
 import FavoriteToggleButton from './FavoriteToggleButton';
+import SafeImage from '../ui/safe-image';
 import { PropertyCardProps } from '@/utils/types';
 import { formatCurrency } from '@/utils/format';
 
@@ -20,7 +20,7 @@ function PropertyCard({
     <article className='group relative'>
       <Link href={`/properties/${propertyId}`}>
         <div className='relative h-[300px] mb-2 overflow-hidden rounded-md'>
-          <Image
+          <SafeImage
             src={image}
             fill
             sizes='(max-width:768px) 100vw, 50vw'

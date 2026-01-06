@@ -11,10 +11,15 @@ const nextConfig = {
         protocol: 'https',
         hostname: 'img.clerk.com',
       },
-      {
-        protocol: 'https',
-        hostname: 'ziiabtjfoefytlefvpir.supabase.co',
-      },
+      // 动态支持 Supabase URL（从环境变量读取）
+      ...(process.env.SUPABASE_URL
+        ? [
+            {
+              protocol: 'https',
+              hostname: new URL(process.env.SUPABASE_URL).hostname,
+            },
+          ]
+        : []),
     ],
   },
   // 启用压缩

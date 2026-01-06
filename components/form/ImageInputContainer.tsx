@@ -1,6 +1,6 @@
 'use client';
 import { useState } from 'react';
-import Image from 'next/image';
+import SafeImage from '../ui/safe-image';
 import { Button } from '../ui/button';
 import FormContainer from './FormContainer';
 import ImageInput from './ImageInput';
@@ -26,12 +26,13 @@ function ImageInputContainer(props: ImageInputContainerProps) {
   return (
     <div>
       {image ? (
-        <Image
+        <SafeImage
           src={image}
           alt={name}
           width={100}
           height={100}
           className='rounded object-cover mb-4 w-24 h-24'
+          fallbackIcon={userIcon}
         />
       ) : (
         userIcon

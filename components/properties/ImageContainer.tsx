@@ -1,4 +1,4 @@
-import Image from 'next/image';
+import SafeImage from '../ui/safe-image';
 
 function ImageContainer({
   mainImage,
@@ -9,7 +9,7 @@ function ImageContainer({
 }) {
   return (
     <section className='h-[300px] md:h-[500px] relative mt-8'>
-      <Image
+      <SafeImage
         src={mainImage}
         fill
         sizes='100vw'
