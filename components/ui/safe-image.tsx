@@ -78,7 +78,10 @@ export default function SafeImage({
   if (hasError && useNativeImg) {
     if (fill) {
       return (
-        <div className={`absolute inset-0 ${className}`}>
+        <div
+          className={`absolute inset-0 ${className}`}
+          data-testid='safe-image-fallback'
+        >
           {fallback}
         </div>
       );
@@ -87,6 +90,7 @@ export default function SafeImage({
       <div
         className={className}
         style={{ width, height }}
+        data-testid='safe-image-fallback'
       >
         {fallback}
       </div>
