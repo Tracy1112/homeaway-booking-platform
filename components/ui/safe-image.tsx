@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import { LuImageOff } from 'react-icons/lu';
 
@@ -18,7 +18,8 @@ interface SafeImageProps {
 
 /**
  * SafeImage component with error handling and fallback
- * Prevents 502 errors when images fail to load
+ * Prevents 400/502 errors when images fail to load or when Supabase is paused
+ * Falls back to native img tag if Next.js Image optimization fails
  */
 export default function SafeImage({
   src,
@@ -32,6 +33,7 @@ export default function SafeImage({
   fallbackIcon,
 }: SafeImageProps) {
   const [hasError, setHasError] = useState(false);
+  const [useNativeImg, setUseNativeImg] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
 
   // Default fallback icon
@@ -43,8 +45,33 @@ export default function SafeImage({
 
   const fallback = fallbackIcon || defaultFallback;
 
-  // If error occurred, show fallback
-  if (hasError) {
+  // Check if we should use unoptimized mode (for Supabase URLs when paused)
+  const shouldUnoptimize = 
+    src.startsWith('data:') || 
+    src.startsWith('blob:') ||
+    (src.includes('supabase.co') && useNativeImg);
+
+  // Handle image load error
+  const handleError = () => {
+    if (!useNativeImg) {
+      // First error: try native img tag
+      setUseNativeImg(true);
+      setHasError(false);
+      setIsLoading(true);
+    } else {
+      // Second error: show fallback
+      setHasError(true);
+      setIsLoading(false);
+    }
+  };
+
+  // Handle image load success
+  const handleLoad = () => {
+    setIsLoading(false);
+  };
+
+  // If final error, show fallback
+  if (hasError && useNativeImg) {
     if (fill) {
       return (
         <div className={`absolute inset-0 ${className}`}>
@@ -62,17 +89,33 @@ export default function SafeImage({
     );
   }
 
-  // Handle image load error
-  const handleError = () => {
-    setHasError(true);
-    setIsLoading(false);
-  };
+  // Use native img tag if Next.js Image failed
+  if (useNativeImg) {
+    const imgStyle = fill
+      ? { objectFit: 'cover' as const, width: '100%', height: '100%' }
+      : { width, height };
 
-  // Handle image load success
-  const handleLoad = () => {
-    setIsLoading(false);
-  };
+    return (
+      <>
+        {isLoading && (
+          <div
+            className={fill ? 'absolute inset-0 bg-muted animate-pulse' : 'bg-muted animate-pulse'}
+            style={fill ? undefined : { width, height }}
+          />
+        )}
+        <img
+          src={src}
+          alt={alt}
+          className={className}
+          style={imgStyle}
+          onError={handleError}
+          onLoad={handleLoad}
+        />
+      </>
+    );
+  }
 
+  // Use Next.js Image component
   try {
     if (fill) {
       return (
@@ -89,7 +132,7 @@ export default function SafeImage({
             priority={priority}
             onError={handleError}
             onLoad={handleLoad}
-            unoptimized={src.startsWith('data:') || src.startsWith('blob:')}
+            unoptimized={shouldUnoptimize}
           />
         </>
       );
@@ -112,20 +155,30 @@ export default function SafeImage({
           priority={priority}
           onError={handleError}
           onLoad={handleLoad}
-          unoptimized={src.startsWith('data:') || src.startsWith('blob:')}
+          unoptimized={shouldUnoptimize}
         />
       </>
     );
   } catch (error) {
-    // If Image component fails, show fallback
+    // If Image component fails, try native img
     console.error('Image component error:', error);
+    setUseNativeImg(true);
+    setHasError(false);
+    setIsLoading(true);
+    
+    const imgStyle = fill
+      ? { objectFit: 'cover' as const, width: '100%', height: '100%' }
+      : { width, height };
+
     return (
-      <div
+      <img
+        src={src}
+        alt={alt}
         className={className}
-        style={fill ? undefined : { width, height }}
-      >
-        {fallback}
-      </div>
+        style={imgStyle}
+        onError={handleError}
+        onLoad={handleLoad}
+      />
     );
   }
 }

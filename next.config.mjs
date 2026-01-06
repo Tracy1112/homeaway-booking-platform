@@ -12,6 +12,7 @@ const nextConfig = {
         hostname: 'img.clerk.com',
       },
       // 动态支持 Supabase URL（从环境变量读取）
+      // 如果 Supabase 暂停，Next.js Image 优化器会失败，SafeImage 组件会回退到原生 img
       ...(process.env.SUPABASE_URL
         ? [
             {
@@ -20,6 +21,11 @@ const nextConfig = {
             },
           ]
         : []),
+      // 也支持硬编码的 Supabase hostname（用于构建时）
+      {
+        protocol: 'https',
+        hostname: '*.supabase.co',
+      },
     ],
   },
   // 启用压缩
