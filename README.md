@@ -13,18 +13,26 @@
 
 ## 📋 Table of Contents
 
-- [Overview](#overview)
-- [Key Features](#key-features)
-- [Tech Stack](#tech-stack)
-- [Project Architecture](#project-architecture)
-- [Getting Started](#getting-started)
-- [Project Structure](#project-structure)
-- [Core Functionality](#core-functionality)
-- [Performance Optimizations](#performance-optimizations)
-- [Security Features](#security-features)
-- [Testing](#testing)
-- [Deployment](#deployment)
-- [Project Metrics](#project-metrics)
+- [Overview](#-overview)
+- [Key Features](#-key-features)
+- [Tech Stack](#️-tech-stack)
+- [Project Architecture](#️-project-architecture)
+- [Getting Started](#-getting-started)
+- [Project Structure](#-project-structure)
+- [Core Functionality](#-core-functionality)
+- [Performance Optimizations](#-performance-optimizations)
+- [Security Features](#-security-features)
+- [Testing](#-testing)
+- [Deployment](#-deployment)
+- [Project Metrics](#-project-metrics)
+- [Skills Demonstrated](#-skills-demonstrated)
+- [Documentation](#-documentation)
+- [Contributing](#-contributing)
+- [License](#-license)
+- [Developer](#️-developer)
+- [Live Demo](#-live-demo)
+- [Screenshots](#-screenshots)
+- [Resources](#-resources)
 
 ## 🎯 Overview
 
