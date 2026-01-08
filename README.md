@@ -41,7 +41,7 @@
 
 ## 🎯 Overview
 
-**NomadLiving Stays** is the flagship booking engine of the **NomadLiving Digital Ecosystem**, a suite of interconnected platforms designed to revolutionize experiential travel. This production-ready application specializes in curated glamping sites and tiny homes, seamlessly integrating with NomadLiving Boutique (Project A) for furniture commerce and NomadLiving Ops Console (Project C) for operations management.
+**NomadLiving Stays** is the flagship booking engine of the **NomadLiving Digital Ecosystem**, a suite of interconnected platforms designed to revolutionize experiential travel. This production-ready application specializes in curated glamping sites and tiny homes, seamlessly integrating with NomadLiving Boutique for furniture commerce and NomadLiving Ops Console for operations management.
 
 The platform showcases enterprise-level full-stack development capabilities, from database design to frontend implementation, with a focus on production-ready code quality, security, and performance. As part of the NomadLiving ecosystem, it connects guests with unique stays while enabling them to shop curated furniture directly from their accommodation experience.
 
