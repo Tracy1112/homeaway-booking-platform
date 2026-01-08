@@ -9,6 +9,7 @@ import {
   handleApiError,
   ensureExists,
 } from '@/utils/errors';
+import { rateLimit, getClientIP, RATE_LIMITS } from '@/utils/rate-limit';
 
 // 延迟创建 Stripe 客户端，只在需要时检查环境变量
 function getStripeClient() {
@@ -21,6 +22,33 @@ function getStripeClient() {
 
 export const POST = async (req: NextRequest) => {
   try {
+    // Rate limiting for payment endpoint
+    const clientIP = getClientIP(req);
+    const rateLimitResult = rateLimit(clientIP, {
+      ...RATE_LIMITS.PAYMENT,
+      identifier: 'payment',
+    });
+
+    if (!rateLimitResult.success) {
+      return Response.json(
+        {
+          error: {
+            message: 'Too many requests. Please try again later.',
+            code: 'RATE_LIMIT_EXCEEDED',
+          },
+        },
+        {
+          status: 429,
+          headers: {
+            'X-RateLimit-Limit': String(rateLimitResult.limit),
+            'X-RateLimit-Remaining': String(rateLimitResult.remaining),
+            'X-RateLimit-Reset': String(rateLimitResult.reset),
+            'Retry-After': String(rateLimitResult.retryAfter || 60),
+          },
+        }
+      );
+    }
+
     const requestHeaders = new Headers(req.headers);
     const origin = requestHeaders.get('origin');
     
@@ -107,7 +135,14 @@ export const POST = async (req: NextRequest) => {
       throw new PaymentError('Failed to get payment client secret');
     }
 
-    return Response.json({ clientSecret: session.client_secret });
+    const response = Response.json({ clientSecret: session.client_secret });
+    
+    // Add rate limit headers
+    response.headers.set('X-RateLimit-Limit', String(rateLimitResult.limit));
+    response.headers.set('X-RateLimit-Remaining', String(rateLimitResult.remaining));
+    response.headers.set('X-RateLimit-Reset', String(rateLimitResult.reset));
+    
+    return response;
   } catch (error) {
     return handleApiError(error, 'Failed to process payment');
   }

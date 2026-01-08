@@ -9,8 +9,8 @@ const createMockRequest = (url: string, options?: RequestInit) => {
     headers: new Headers(options?.headers),
     json: async () => {
       if (options?.body) {
-        return typeof options.body === 'string' 
-          ? JSON.parse(options.body) 
+        return typeof options.body === 'string'
+          ? JSON.parse(options.body)
           : options.body
       }
       return {}
@@ -223,7 +223,7 @@ describe('/api/payment', () => {
     // PaymentError returns 402
     expect(response.status).toBe(402)
     expect(data.error.message).toContain('already been paid')
-    
+
     const Stripe = require('stripe')
     const stripeInstance = new Stripe()
     expect(stripeInstance.checkout.sessions.create).not.toHaveBeenCalled()

@@ -536,9 +536,34 @@ Secure payment processing using Stripe Checkout:
 
 - **Environment Variable Validation**: All required env vars validated at startup
 - **Secret Management**: Sensitive data never exposed to client
-- **Secure Headers**: Security headers configured
-- **API Security**: Input validation, rate limiting considerations
+- **Secure Headers**: Comprehensive security headers (CSP, X-Frame-Options, HSTS, etc.)
+- **API Security**: Input validation, rate limiting, CORS protection
 - **Data Privacy**: Australian Privacy Principles compliance considerations
+
+### Rate Limiting
+
+- **In-Memory Rate Limiting**: Prevents abuse and DDoS attacks
+- **Configurable Limits**: Different limits for different endpoint types
+  - Payment endpoints: 10 requests/minute
+  - Authentication endpoints: 5 requests/minute
+  - Standard API: 100 requests/minute
+  - Public endpoints: 200 requests/minute
+- **Rate Limit Headers**: Responses include limit, remaining, and reset information
+- **Production Ready**: Can be upgraded to Redis for distributed systems
+
+### CORS Protection
+
+- **Whitelist-Based**: Only allows requests from configured origins
+- **Credential Support**: Secure credential handling for authenticated requests
+- **Preflight Handling**: Proper OPTIONS request handling
+- **Configurable**: Easy to add/remove allowed origins
+
+### Content Security Policy (CSP)
+
+- **XSS Protection**: Strict CSP prevents cross-site scripting attacks
+- **Trusted Sources Only**: Scripts, styles, and resources from trusted domains
+- **Stripe & Clerk Integration**: Properly configured for third-party services
+- **Development Mode**: Relaxed CSP for development (auto-tightened in production)
 
 ### Australian Market Compliance
 

@@ -9,6 +9,7 @@ import {
   DatabaseError,
   ensureExists,
 } from '@/utils/errors';
+import { rateLimit, getClientIP, RATE_LIMITS } from '@/utils/rate-limit';
 
 // 延迟创建 Stripe 客户端，只在需要时检查环境变量
 function getStripeClient() {
@@ -21,6 +22,18 @@ function getStripeClient() {
 
 export const GET = async (req: NextRequest) => {
   try {
+    // Rate limiting for confirm endpoint
+    const clientIP = getClientIP(req);
+    const rateLimitResult = rateLimit(clientIP, {
+      ...RATE_LIMITS.PAYMENT,
+      identifier: 'confirm',
+    });
+
+    if (!rateLimitResult.success) {
+      redirect(`/bookings?error=rate_limit&retry_after=${rateLimitResult.retryAfter}`);
+      return;
+    }
+
     const { searchParams } = new URL(req.url);
     const session_id = searchParams.get('session_id');
 

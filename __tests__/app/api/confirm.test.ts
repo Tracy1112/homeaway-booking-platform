@@ -70,7 +70,9 @@ describe('/api/confirm', () => {
 
     await GET(request)
 
-    expect(stripeInstance.checkout.sessions.retrieve).toHaveBeenCalledWith('session_123')
+    expect(stripeInstance.checkout.sessions.retrieve).toHaveBeenCalledWith(
+      'session_123'
+    )
     expect(db.booking.findUnique).toHaveBeenCalledWith({
       where: { id: 'booking-1' },
       select: { id: true, paymentStatus: true },
@@ -213,7 +215,9 @@ describe('/api/confirm', () => {
     const stripeInstance = new Stripe()
     stripeInstance.checkout.sessions.retrieve.mockResolvedValue(mockSession)
     ;(db.booking.findUnique as jest.Mock).mockResolvedValue(mockBooking)
-    ;(db.booking.update as jest.Mock).mockRejectedValue(new Error('Database error'))
+    ;(db.booking.update as jest.Mock).mockRejectedValue(
+      new Error('Database error')
+    )
 
     const request = createMockRequest(
       'http://localhost:3000/api/confirm?session_id=session_123'
@@ -322,4 +326,3 @@ describe('/api/confirm', () => {
     expect(redirect).toHaveBeenCalledWith('/bookings')
   })
 })
-
