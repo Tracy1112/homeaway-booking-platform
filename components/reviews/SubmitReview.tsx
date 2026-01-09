@@ -22,7 +22,6 @@ function SubmitReview({ propertyId }: { propertyId: string }) {
             <TextAreaInput
               name='comment'
               labelText='feedback'
-              defaultValue='Amazing place !!!'
             />
             <SubmitButton text='Submit' className='mt-4' />
           </FormContainer>

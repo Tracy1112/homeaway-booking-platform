@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 
 interface ErrorBoundaryState {
@@ -68,8 +69,8 @@ class ErrorBoundary extends React.Component<
             <Button onClick={this.handleReset} variant="outline">
               Try Again
             </Button>
-            <Button onClick={() => window.location.href = '/'} variant="default">
-              Back to NomadLiving Stays
+            <Button asChild variant="default">
+              <Link href="/">Back to NomadLiving Stays</Link>
             </Button>
           </div>
         </div>

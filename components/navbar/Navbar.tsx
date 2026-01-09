@@ -6,6 +6,16 @@ import Link from 'next/link';
 import { Button } from '../ui/button';
 import { LuShoppingBag } from 'react-icons/lu';
 
+/**
+ * Main navigation bar component
+ * 
+ * Features:
+ * - Logo and brand name
+ * - Search functionality
+ * - "Shop the Look" button linking to NomadLiving Boutique
+ * - Dark mode toggle
+ * - User menu dropdown
+ */
 function Navbar() {
   return (
     <nav className='border-b'>
@@ -13,7 +23,7 @@ function Navbar() {
         <Logo />
         <NavSearch />
         <div className='flex gap-4 items-center'>
-          <Button variant='outline' asChild className='hidden sm:flex'>
+          <Button variant='default' asChild className='hidden sm:flex bg-primary text-primary-foreground hover:bg-primary/90 shadow-md hover:shadow-lg transition-all duration-200 font-semibold'>
             <Link href='https://nomadliving-boutique.vercel.app' target='_blank' rel='noopener noreferrer'>
               <LuShoppingBag className='w-4 h-4 mr-2' />
               Shop the Look

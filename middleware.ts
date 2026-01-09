@@ -11,7 +11,7 @@ const isPublicRoute = createRouteMatcher(['/', '/properties(.*)']);
 const isAdminRoute = createRouteMatcher(['/admin(.*)']);
 const isApiRoute = createRouteMatcher(['/api(.*)']);
 
-// 环境变量验证
+// Validate environment variables
 const adminUserId = process.env.ADMIN_USER_ID;
 if (!adminUserId && process.env.NODE_ENV === 'production') {
   console.error('⚠️  WARNING: ADMIN_USER_ID is not set in production environment');
